@@ -8,10 +8,8 @@ app.use(cors());
 app.use(express.json());
 
 // conn data
-mongoose.connect('mongodb://127.0.0.1:27017/assignment_db', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(() => console.log('db connected maybe')).catch(err => console.log('db error', err));
+mongoose.connect('mongodb+srv://vamshikrishnapendyala19:vamshikrishna2005@cluster0.basmyl.mongodb.net/assignment_db?retryWrites=true&w=majority&appName=Cluster0')
+.then(() => console.log('db connected maybe')).catch(err => console.log('db error', err));
 
 const UserSchema = new mongoose.Schema({
     email: { type: String, required: true },
@@ -164,6 +162,6 @@ app.get('/submission/:assignmentId', checkTeacher, async (req, res) => {
     res.json(stuff);
 });
 
-app.listen(5000, () => {
-    console.log('server on 5000 !!');
+app.listen(5001, () => {
+    console.log('server on 5001 !!');
 });
