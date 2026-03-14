@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -8,7 +9,7 @@ app.use(cors());
 app.use(express.json());
 
 // conn data
-mongoose.connect('mongodb+srv://vamshikrishnapendyala19:vamshikrishna2005@cluster0.basmyl.mongodb.net/assignment_db?retryWrites=true&w=majority&appName=Cluster0')
+mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://vamshikrishnapendyala19:vamshikrishna2005@cluster0.basmyl.mongodb.net/assignment_db?retryWrites=true&w=majority&appName=Cluster0')
 .then(() => console.log('db connected maybe')).catch(err => console.log('db error', err));
 
 const UserSchema = new mongoose.Schema({
@@ -34,7 +35,7 @@ const SubSchema = new mongoose.Schema({
 });
 const Sub = mongoose.model('Submission', SubSchema);
 
-const SECRET_KEY = "my_super_secret_key_123_temp";
+const SECRET_KEY = process.env.JWT_SECRET || "my_super_secret_key_123_temp";
 
 const checkTeacher = (req, res, next) => {
     let t = req.headers.authorization;
@@ -162,6 +163,7 @@ app.get('/submission/:assignmentId', checkTeacher, async (req, res) => {
     res.json(stuff);
 });
 
-app.listen(5001, () => {
-    console.log('server on 5001 !!');
+const PORT = process.env.PORT || 5001;
+app.listen(PORT, () => {
+    console.log('server on ' + PORT + ' !!');
 });
