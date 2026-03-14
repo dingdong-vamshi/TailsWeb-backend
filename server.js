@@ -135,6 +135,35 @@ app.delete('/assignment/delete/:id', checkTeacher, async (req, res) => {
     }
 });
 
+app.post('/submission', async (req, res) => {
+    let t = req.headers.authorization;
+    if(!t) return res.status(401);
+    let dec = jwt.verify(t.split(" ")[1], SECRET_KEY);
+    
+    if(dec.role !== 'student') return res.status(400).json({msg: 'only students'});
+    
+    let a_id = req.body.assignmentId;
+    let text123 = req.body.answer;
+    
+    let exist = await Sub.findOne({assignmentId: a_id, studentId: dec.id});
+    if(exist) {
+        return res.status(400).json({msg: 'already submitted'});
+    }
+    
+    let sub = new Sub({
+        assignmentId: a_id,
+        studentId: dec.id,
+        answer: text123
+    });
+    await sub.save();
+    res.json(sub);
+});
+
+app.get('/submission/:assignmentId', checkTeacher, async (req, res) => {
+    let stuff = await Sub.find({assignmentId: req.params.assignmentId});
+    res.json(stuff);
+});
+
 app.listen(5000, () => {
     console.log('server on 5000 !!');
 });
